@@ -49,6 +49,23 @@ Variabel lain: `VITE_MQTT_URL`, `VITE_MQTT_USERNAME`, `VITE_MQTT_PASSWORD`, `VIT
 
 Detail topik, format payload, dan contoh firmware ada di [docs/mqtt-contract.md](docs/mqtt-contract.md).
 
+## Deploy
+
+Produksi: **https://capstone-seven-fawn.vercel.app**
+
+Repo GitHub [oktayudha05/capstone-cabai](https://github.com/oktayudha05/capstone-cabai) tersambung ke project Vercel `capstone`, jadi tiap push ke `main` langsung membangun ulang situs produksi.
+
+- Framework terdeteksi otomatis: Vite, perintah `vite build`, keluaran `dist`.
+- `VITE_DATA_SOURCE=dummy` diset di environment Production dan Preview, jadi deploy selalu memakai simulator sampai integrasi MQTT siap.
+- Saat integrasi tiba: ubah `VITE_DATA_SOURCE` jadi `mqtt` di dashboard Vercel, isi `VITE_MQTT_URL`, lalu deploy ulang. Tidak perlu ubah kode.
+- Konfigurasi di [`vercel.json`](vercel.json) (header keamanan) dan [`.vercelignore`](.vercelignore) (`.hermes/` tidak diunggah).
+
+Deploy manual dari laptop:
+
+```bash
+npx vercel deploy --prod   # butuh login sekali: npx vercel login
+```
+
 ## Interaksi
 
 - **Tahan / Lanjutkan**: membekukan pembacaan supaya angka bisa dibaca dan dicatat saat demo. Angka yang beku diredupkan, dan muncul pita kuning yang menyebut waktu pembekuannya.
