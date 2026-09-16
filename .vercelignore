@@ -1,0 +1,16 @@
+# Konteks agen dan skill pihak ketiga. Bukan bagian dari aplikasi.
+.hermes/
+
+# Berkas proyek yang tidak dibutuhkan saat build.
+docs/
+scripts/
+README.md
+PRODUCT.md
+DESIGN.md
+antislop.md
+AGENTS.md
+LICENSE-antislop
+.env.testing.md
+.env.*
+!/.env.example
+/tmp/
