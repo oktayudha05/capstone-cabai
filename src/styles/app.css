@@ -1,0 +1,659 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--page);
+  color: var(--ink);
+  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-size: var(--step-body);
+  line-height: 1.5;
+  -webkit-tap-highlight-color: transparent;
+}
+
+::selection {
+  background: var(--yellow-fill);
+  color: var(--on-yellow-fill);
+}
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.shell {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header tetap ramping supaya tidak memakan layar ponsel, dan kontrolnya
+   melipat ke baris kedua saat ruang tidak cukup. */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--page);
+  border-bottom: 1px solid var(--line);
+}
+
+.topbar__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  padding: 10px 16px;
+  max-width: 82rem;
+  margin: 0 auto;
+}
+
+.topbar__title {
+  font-size: var(--step-title);
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.control-group {
+  display: flex;
+  gap: 2px;
+  padding: 2px;
+  border: 1px solid var(--control-line);
+  border-radius: var(--radius-control);
+}
+
+/* Satu bentuk tombol untuk semua kontrol. Keadaan aktif dibedakan isian dan
+   berat huruf, bukan warna aksen, supaya aksen tetap milik data. */
+.control {
+  min-height: 44px;
+  padding: 8px 14px;
+  border: 1px solid var(--control-line);
+  border-radius: var(--radius-control);
+  background: var(--tile);
+  color: var(--ink);
+  font: inherit;
+  font-size: var(--step-label);
+  font-weight: 550;
+  cursor: pointer;
+  transition:
+    background-color 150ms var(--ease-out),
+    color 150ms var(--ease-out),
+    border-color 150ms var(--ease-out);
+}
+
+.control-group .control {
+  border-color: transparent;
+  background: transparent;
+}
+
+.control:hover {
+  border-color: var(--ink);
+}
+
+.control-group .control:hover {
+  border-color: transparent;
+  background: var(--tile-alt);
+}
+
+.control[aria-pressed='true'] {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--page);
+  font-weight: 650;
+}
+
+.control--primary {
+  background: var(--olive-fill);
+  border-color: var(--olive-fill);
+  color: var(--on-olive-fill);
+  font-weight: 650;
+}
+
+.control--primary:hover {
+  border-color: var(--olive-fill);
+  filter: brightness(0.94);
+}
+
+.control--quiet {
+  min-height: 36px;
+  padding: 4px 12px;
+  background: transparent;
+  border-color: var(--on-yellow-muted);
+  color: var(--on-yellow-fill);
+}
+
+.control--quiet:hover {
+  border-color: var(--on-yellow-fill);
+}
+
+.frozen {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  margin: 0;
+  padding: 10px 16px;
+  background: var(--yellow-fill);
+  color: var(--on-yellow-fill);
+  border-bottom: 1px solid var(--line);
+}
+
+.frozen__badge {
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: var(--on-yellow-fill);
+  color: var(--yellow-fill);
+  font-size: var(--step-label);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.frozen__text {
+  font-size: var(--step-label);
+  color: var(--on-yellow-muted);
+}
+
+.main {
+  flex: 1;
+  width: 100%;
+  max-width: 82rem;
+  margin: 0 auto;
+  padding: var(--gap);
+}
+
+.grid {
+  display: grid;
+  gap: var(--gap);
+  grid-template-columns: 1fr;
+}
+
+/* Saat dijeda, angka yang tidak lagi hidup diredupkan supaya tidak salah dibaca
+   sebagai pembacaan berjalan. Semua tetap di atas 4.5:1, jadi terbaca. */
+.shell--paused .metric__value,
+.shell--paused .actuator__value,
+.shell--paused .readings dd {
+  opacity: 0.55;
+}
+
+.tile {
+  background: var(--tile);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-tile);
+  padding: var(--gap);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.tile--highlight {
+  background: var(--yellow-fill);
+  border-color: var(--yellow-fill);
+  color: var(--on-yellow-fill);
+}
+
+/* Satu-satunya motion yang ditulis di permukaan ini: cincin saat relay berubah.
+   Keadaan relay memang inti produk, jadi perubahannya yang dapat sorotan. */
+.tile--flip {
+  animation: relay-flip 900ms var(--ease-out);
+}
+
+@keyframes relay-flip {
+  0% {
+    box-shadow: 0 0 0 0 var(--ink);
+  }
+  100% {
+    box-shadow: 0 0 0 6px transparent;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tile--flip {
+    animation: none;
+  }
+}
+
+.tile__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.tile__heading {
+  font-size: var(--step-heading);
+  font-weight: 620;
+  letter-spacing: -0.005em;
+  margin: 0;
+}
+
+.tile__note {
+  font-size: var(--step-label);
+  color: var(--muted);
+  margin: 0;
+}
+
+.tile--highlight .tile__note {
+  color: var(--on-yellow-muted);
+}
+
+.metric {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin: 0;
+}
+
+/* Kontras hierarki lewat ukuran angka: ubin tanah adalah pembacaan utama,
+   ubin udara pembacaan pendukung. */
+.metric__value {
+  font-size: 1.75rem;
+  font-weight: 680;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  transition: opacity 150ms var(--ease-out);
+}
+
+.metric--primary .metric__value {
+  font-size: var(--step-metric);
+}
+
+.metric__unit {
+  font-size: 0.9375rem;
+  font-weight: 550;
+  color: var(--muted);
+}
+
+.tile--highlight .metric__unit {
+  color: var(--on-yellow-muted);
+}
+
+.placeholder {
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--muted);
+  margin: 0;
+}
+
+.readings {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 20px;
+  margin: 0;
+  font-size: var(--step-label);
+}
+
+.readings dt {
+  color: var(--muted);
+}
+
+.readings dd {
+  margin: 0;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  transition: opacity 150ms var(--ease-out);
+}
+
+.tile--highlight .readings dt {
+  color: var(--on-yellow-muted);
+}
+
+.actuator {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0;
+}
+
+.actuator__value {
+  font-size: 1.5rem;
+  font-weight: 680;
+  letter-spacing: -0.01em;
+  transition: opacity 150ms var(--ease-out);
+}
+
+/* Titik menandai keadaan relay yang sebenarnya, bukan hiasan. */
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex: none;
+}
+
+.dot--on {
+  background: var(--olive);
+}
+
+.dot--off {
+  background: var(--dot-off);
+}
+
+.trend {
+  display: grid;
+  gap: 12px;
+}
+
+.chart {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 8px;
+}
+
+.chart__axis {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-size: var(--step-label);
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  padding-block: 2px;
+}
+
+.chart__plot {
+  display: block;
+  width: 100%;
+  height: 150px;
+  cursor: crosshair;
+  touch-action: pan-y;
+}
+
+.chart__plot:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+
+.chart__grid {
+  stroke: var(--grid);
+  stroke-width: 1;
+}
+
+.chart__grid--mid {
+  stroke: var(--control-line);
+}
+
+.chart__line {
+  fill: none;
+  stroke-width: 2;
+}
+
+.chart__line--soil {
+  stroke: var(--olive);
+}
+
+.chart__line--air {
+  stroke: var(--orange);
+}
+
+.chart__cursor {
+  stroke: var(--ink);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+}
+
+.chart__times {
+  grid-column: 2;
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--step-label);
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.readout {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 16px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-inner);
+  background: var(--tile-alt);
+}
+
+.readout__time {
+  margin: 0;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+}
+
+.readout__values {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin: 0;
+  font-size: var(--step-label);
+}
+
+.readout__values dt {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+}
+
+.readout__values dd {
+  margin: 0;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+}
+
+.readout__slot {
+  min-height: 58px;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 16px;
+  font-size: var(--step-label);
+  color: var(--muted);
+}
+
+.legend__item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend__swatch {
+  width: 16px;
+  height: 3px;
+  border-radius: 2px;
+  flex: none;
+}
+
+.legend__swatch--soil {
+  background: var(--olive);
+}
+
+.legend__swatch--air {
+  background: var(--orange);
+}
+
+.events {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 2px;
+  max-height: 15rem;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--control-line) transparent;
+}
+
+/* Permukaan browser ikut didesain: kotak gulir bawaan bukan milik palet mana pun. */
+.events::-webkit-scrollbar {
+  width: 8px;
+}
+
+.events::-webkit-scrollbar-thumb {
+  background: var(--control-line);
+  border-radius: 4px;
+}
+
+.events::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.events__item {
+  display: flex;
+  gap: 12px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: var(--step-label);
+}
+
+.events__item:last-child {
+  border-bottom: 0;
+}
+
+.events__time {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  flex: none;
+}
+
+.events__what {
+  font-weight: 600;
+}
+
+.events__state--on {
+  color: var(--olive);
+}
+
+.strip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 16px;
+  padding: 10px 16px;
+  border-top: 1px solid var(--line);
+  background: var(--tile-alt);
+  font-size: var(--step-label);
+  color: var(--muted);
+}
+
+.strip__group {
+  display: flex;
+  gap: 4px;
+}
+
+.strip__value {
+  color: var(--ink);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.panel {
+  background: var(--tile);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-tile);
+  padding: 24px var(--gap);
+  max-width: 40rem;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.panel__heading {
+  font-size: var(--step-heading);
+  font-weight: 620;
+  margin: 0;
+}
+
+.panel p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.panel__list {
+  margin: 0;
+  padding-left: 20px;
+  color: var(--muted);
+}
+
+.panel code {
+  font-family: ui-monospace, 'Cascadia Mono', monospace;
+  font-size: 0.8125rem;
+  background: var(--tile-alt);
+  padding: 1px 5px;
+  border-radius: 4px;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Ponsel dulu sebagai keadaan sendiri. Kolom kedua muncul saat ubin sensor
+   sudah terlalu lebar ditumpuk, kolom keempat saat tata letak melebar. */
+@media (min-width: 40rem) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .tile--soil,
+  .tile--air {
+    grid-column: span 2;
+  }
+}
+
+@media (min-width: 64rem) {
+  .grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    align-items: start;
+  }
+
+  /* Tidak ada ubin yang dibentangkan dua baris: bentang itu memaksa isinya
+     diregangkan atau menyisakan rongga. Ubin tanah jadi titik fokus lewat
+     isian sorotan dan ukuran angkanya, bukan lewat luas kotak. */
+  .tile--soil {
+    grid-column: 1 / 3;
+  }
+
+  .tile--air {
+    grid-column: 3 / 5;
+  }
+
+  .tile--fan {
+    grid-column: 1 / 3;
+  }
+
+  .tile--pump {
+    grid-column: 3 / 5;
+  }
+
+  .tile--trend {
+    grid-column: 1 / 4;
+  }
+
+  .tile--events {
+    grid-column: 4 / 5;
+  }
+}

@@ -1,0 +1,91 @@
+/* Palet dari DESIGN.md. Dua warna di dokumen itu tidak lolos WCAG AA sebagai
+   teks di latar terang (kuning 1.26:1, oranye 1.88:1), jadi tiap hue punya dua
+   peran: isian (hex asli) dan teks (step yang digelapkan sampai 4.5:1 di
+   KETIGA permukaan, bukan hanya di ubin putih). Rasio di bawah diukur dengan
+   contrast-check.py, bukan dikira-kira.
+
+   Netralnya sengaja dingin, bukan cream. Detektor impeccable menandai cream
+   (#F5F3EE sebelumnya) sebagai permukaan "tasteful" bawaan AI, dan DESIGN.md
+   sendiri hanya meminta "off-white atau abu-abu sangat muda", jadi netral
+   dingin tetap patuh pada brief sambil lepas dari default itu. */
+:root {
+  color-scheme: light;
+
+  --page: #f2f4f5;
+  --tile: #ffffff;
+  --tile-alt: #e7eaec;
+  --ink: #1b1f22; /* 16.59:1 on tile */
+  --muted: #5a6167; /* 6.29:1 on tile, 5.20:1 on alt */
+  --line: #c3c9ce;
+  --control-line: #7e868c; /* 3.70:1 on tile, 3.42:1 on alt */
+  --grid: #dde1e4;
+
+  --olive: #527136; /* 5.56:1 tile, 4.60:1 alt */
+  --olive-fill: #5b7e3c; /* DESIGN.md olive, dipakai sebagai isian */
+  --on-olive-fill: #ffffff; /* 4.67:1 on #5b7e3c */
+  --orange: #945b14; /* 5.58:1 tile, 4.61:1 alt */
+  --orange-fill: #d4821d;
+  --yellow-fill: #ffd65a; /* isian sorotan, DESIGN.md */
+  --on-yellow-fill: #1b1f22; /* 11.87:1 on #ffd65a */
+  /* Shade dari hue kuning itu sendiri, bukan abu-abu. Abu di atas latar
+     berwarna terlihat pudar dan ditandai detektor impeccable sebagai
+     gray-on-color; ini 5.14:1 dan tetap satu keluarga warna dengan latarnya. */
+  --on-yellow-muted: #665624;
+  --red: #b74040; /* 5.50:1 tile, 4.55:1 alt */
+  --dot-off: #5a6167; /* 5.20:1 on alt */
+
+  --focus: #527136; /* 5.04:1 on page */
+
+  /* Ubin sorotan memakai latar kuning yang sama di kedua tema, jadi garis dan
+     busurnya butuh pasangan sendiri. */
+  --track-highlight: #605e56; /* 4.65:1 on #ffd65a */
+  --arc-highlight: #57793a; /* 3.57:1 on #ffd65a */
+
+  --gap: 16px;
+  --radius-tile: 20px;
+  --radius-inner: 12px;
+  --radius-control: 10px;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Skala tetap, bukan fluid: permukaan Operate dilihat pada DPI yang konsisten
+     dan judul yang mengecil di dalam ubin terlihat lebih buruk, bukan lebih baik.
+     Langkah terbesar 1.31x, cukup untuk hierarki yang terbaca. */
+  --step-label: 0.8125rem; /* 13px */
+  --step-body: 0.9375rem; /* 15px */
+  --step-heading: 1.0625rem; /* 17px */
+  --step-title: 1.25rem; /* 20px */
+  --step-metric: 2.5rem; /* 40px */
+}
+
+[data-theme='dark'] {
+  color-scheme: dark;
+
+  --page: #15181a;
+  --tile: #1d2124;
+  --tile-alt: #262b2f;
+  --ink: #edeff0; /* 14.06:1 on tile */
+  --muted: #a3abb2; /* 6.97:1 on tile, 6.14:1 on alt */
+  --line: #3d4349;
+  --control-line: #727a80; /* 3.71:1 on tile, 3.27:1 on alt */
+  --grid: #2e3438;
+
+  --olive: #7a9b5b; /* 5.15:1 tile, 4.54:1 alt */
+  --olive-fill: #7a9b5b;
+  --on-olive-fill: #15181a; /* 4.77:1 on #7a9b5b */
+  --orange: #ff9d23; /* 7.80:1 tile, 6.87:1 alt */
+  --orange-fill: #ff9d23;
+  --yellow-fill: #ffd65a;
+  --on-yellow-fill: #1b1f22;
+  --on-yellow-muted: #665624;
+  --red: #f07070; /* 5.60:1 tile, 4.94:1 alt */
+  --dot-off: #a3abb2; /* 6.14:1 on alt */
+
+  --focus: #ffd65a; /* 12.75:1 on page */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --ease-out: linear;
+  }
+}
